@@ -1,4 +1,5 @@
 class User < ActiveRecord::Base
+  has_many :microposts, dependent: :destroy    # NEW LINE - association with Micropost
   attr_accessor :remember_token
   before_save { self.email = email.downcase}
   validates :name, length: { in: 4..30}
@@ -17,6 +18,10 @@ class User < ActiveRecord::Base
                                                        BCrypt::Engine.cost
          BCrypt::Password.create(string, cost: cost)
        end
+ 
+      def feed
+           Micropost.where("user_id = ?", id)
+      end
  
        # Returns a random token.
        def User.new_token
